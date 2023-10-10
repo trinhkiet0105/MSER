@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: >-
+    If you use TODO in your research, please cite our work as below.
+preferred-citation:
+  authors:
+      - given-names: Phuong-Nam
+        family-names: Tran 
+        email: namphuongtran9196@gmail.com
+        orcid: 'https://orcid.org/0009-0009-6551-9106'
+        affiliation: FPT University, Ho Chi Minh City, Vietnam
+      - given-names: Duong
+        family-names: Vu Thi Thuy
+        email: duongvtt9@fe.edu.vn
+        orcid: 'https://orcid.org/0000-0001-8614-8732'
+        affiliation: FPT University, Ho Chi Minh City, Vietnam
+      - given-names: Truong
+        family-names: Pham Nhat
+        email: truongpham96@skku.edu
+        orcid: 'https://orcid.org/0000-0002-8086-6722'
+        affiliation: FPT University, Ho Chi Minh City, Vietnam
+      - given-names: Duc
+        family-names: Dang Ngoc Minh
+        email: ducdnm2@fe.edu.vn
+        orcid: 'https://orcid.org/0000-0001-9302-3129'
+        affiliation: Sungkyunkwan University, Suwon, Republic of Korea
+  collection-title: "TODO"
+  collection-type: "TODO"
+  conference:
+    name: "TODO"
+    city: "TODO"
+    country: "TODO"
+  doi: ""
+  start: 
+  end: 
+  month: TODO 
+  year: TODO
+  publisher: ""
+  title: "TODO"
+  type: "TODO"
+  url: "TODO"
+  
+  keywords:
+    - TODO
+    - TODO
+    - TODO
+    - TODO
+    - TODO
+    - TODO
+    - TODO
+  
+  license: Unlicense
