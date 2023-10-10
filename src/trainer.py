@@ -44,16 +44,17 @@ class Trainer(TorchTrainer):
     def test_step(self, batch: Dict[str, Tensor]) -> Dict[str, Tensor]:
         self.network.eval()
         # Prepare batch
-        input_ids, audio, label , attention_mask= batch  ############
+        input_ids, audio, label , attention_mask, video_embedding= batch  ############
 
         # Move inputs to cpu or gpu
         audio = audio.to(self.device)
         label = label.to(self.device)
         input_ids = input_ids.to(self.device)
         attention_mask = attention_mask.to(self.device) ###############
+        video_embedding = video_embedding.to(self.device)
         with torch.no_grad():
             # Forward pass
-            output = self.network(input_ids, audio, attention_mask=attention_mask)
+            output = self.network(input_ids, audio, attention_mask=attention_mask, video_embedding = video_embedding)
             loss = self.criterion(output, label)
             # Calculate accuracy
             _, preds = torch.max(output[0], 1)
