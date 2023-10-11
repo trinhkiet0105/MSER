@@ -180,9 +180,9 @@ class SERVER(nn.Module):
         self.linear2 = nn.Linear(256, 64)
         self.classifer = nn.Linear(64, num_classes)
 
-    def forward(self, input_ids, audio, output_attentions=False):
+    def forward(self, input_ids, audio, output_attentions=False, attention_mask= None, video_embedding= None):
         # Text processing
-        text_embeddings = self.text_encoder(input_ids).pooler_output
+        text_embeddings = self.text_encoder(input_ids,attention_mask= attention_mask).pooler_output
         text_embeddings = self.linear1(text_embeddings)
         # Audio processing
         audio_embeddings = self.audio_encoder(audio)
