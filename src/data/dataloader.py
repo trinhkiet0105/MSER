@@ -105,7 +105,7 @@ def build_train_test_dataset(
         audio_max_length,
         text_max_length,
         audio_encoder_type,
-        # video_dir= 'D:/MELD/video_embeddings/MELD_train_embeddings'
+        video_dir= 'D:/MELD/video_embeddings/MELD_train_embeddings'
         )
     test_data = IEMOCAPDataset(
         os.path.join(root, "test_data.pkl"), 
@@ -113,13 +113,13 @@ def build_train_test_dataset(
         None, 
         None, 
         audio_encoder_type,
-        # video_dir= 'D:/MELD/video_embeddings/MELD_dev_embeddings'
+        video_dir= 'D:/MELD/video_embeddings/MELD_dev_embeddings'
         )
 
     train_dataloader = DataLoader(
         training_data, 
         batch_size=batch_size, 
-        shuffle=False,
+        shuffle=True,
         collate_fn=collate_fn)
     test_dataloader = DataLoader(
         test_data,
