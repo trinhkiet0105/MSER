@@ -20,16 +20,19 @@ class Trainer(TorchTrainer):
         self.optimizer.zero_grad()
 
         # Prepare batch
-        input_ids, audio, label , attention_mask, video_embedding = batch  ############
+        input_ids, audio, label, attention_mask, video_embedding = batch
 
         # Move inputs to cpu or gpu
         audio = audio.to(self.device)
         label = label.to(self.device)
         input_ids = input_ids.to(self.device)
-        attention_mask = attention_mask.to(self.device) ###############
-        video_embedding = video_embedding.to(self.device)
+        attention_mask = attention_mask.to(self.device)
+        
+        if video_embedding is not None:
+            video_embedding = video_embedding.to(self.device)
+        
         # Forward pass
-        output = self.network(input_ids, audio, attention_mask=attention_mask, video_embedding = video_embedding)
+        output = self.network(input_ids, audio, attention_mask=attention_mask, video_embedding=video_embedding)
         loss = self.criterion(output, label)
 
         # Backward pass
@@ -43,18 +46,22 @@ class Trainer(TorchTrainer):
 
     def test_step(self, batch: Dict[str, Tensor]) -> Dict[str, Tensor]:
         self.network.eval()
+        
         # Prepare batch
-        input_ids, audio, label , attention_mask, video_embedding= batch  ############
+        input_ids, audio, label, attention_mask, video_embedding = batch
 
         # Move inputs to cpu or gpu
         audio = audio.to(self.device)
         label = label.to(self.device)
         input_ids = input_ids.to(self.device)
-        attention_mask = attention_mask.to(self.device) ###############
-        video_embedding = video_embedding.to(self.device)
+        attention_mask = attention_mask.to(self.device)
+        
+        if video_embedding is not None:
+            video_embedding = video_embedding.to(self.device)
+        
         with torch.no_grad():
             # Forward pass
-            output = self.network(input_ids, audio, attention_mask=attention_mask, video_embedding = video_embedding)
+            output = self.network(input_ids, audio, attention_mask=attention_mask, video_embedding=video_embedding)
             loss = self.criterion(output, label)
             # Calculate accuracy
             _, preds = torch.max(output[0], 1)

@@ -54,11 +54,16 @@ class IEMOCAPDataset(Dataset):
         attention_mask = torch.tensor(text_input['attention_mask'].squeeze(), dtype=torch.long)
 
         # Load video embedding
-        file_path = os.path.join(self.video_dir, f"{fileName}_embeddings.pkl")
-        with open(file_path, 'rb') as f:
-            video_embedding = pickle.load(f)
-        video_embedding = torch.tensor(np.array(video_embedding)).squeeze(1)
-        video_embedding = torch.mean(video_embedding, dim=1)
+        # Initialize video_embedding to None
+        video_embedding = None
+
+        # Load video embedding if video_dir is not None
+        if self.video_dir is not None:
+            file_path = os.path.join(self.video_dir, f"{fileName}_embeddings.pkl")
+            with open(file_path, 'rb') as f:
+                video_embedding = pickle.load(f)
+            video_embedding = torch.tensor(np.array(video_embedding)).squeeze(1)
+            video_embedding = torch.mean(video_embedding, dim=1)
 
         if isinstance(spectrogram, torch.Tensor):
             spectrogram = spectrogram.clone().detach()
@@ -100,7 +105,7 @@ def build_train_test_dataset(
         audio_max_length,
         text_max_length,
         audio_encoder_type,
-        video_dir= 'D:/MELD/video_embeddings/MELD_train_embeddings'
+        # video_dir= 'D:/MELD/video_embeddings/MELD_train_embeddings'
         )
     test_data = IEMOCAPDataset(
         os.path.join(root, "test_data.pkl"), 
@@ -108,7 +113,7 @@ def build_train_test_dataset(
         None, 
         None, 
         audio_encoder_type,
-        video_dir= 'D:/MELD/video_embeddings/MELD_dev_embeddings'
+        # video_dir= 'D:/MELD/video_embeddings/MELD_dev_embeddings'
         )
 
     train_dataloader = DataLoader(
@@ -136,17 +141,24 @@ def collate_fn(batch):
         padded_spec[:spec.shape[0]] = spec
         padded_spectrograms.append(padded_spec)
     
+    
+    # Check if any video_embedding is None
+    if any(ve is None for ve in video_embeddings):
+        padded_video_embeddings = None
     # Padding for video_embeddings
-    max_length_video = max([ve.shape[0] for ve in video_embeddings])
-    padded_video_embeddings = []
-    for ve in video_embeddings:
-        target_shape = (max_length_video,) + ve.shape[1:]
-        padded_ve = torch.zeros(target_shape, dtype=ve.dtype)
-        padded_ve[:ve.shape[0]] = ve
-        padded_video_embeddings.append(padded_ve)
+    else:
+        # Padding for video_embeddings
+        max_length_video = max([ve.shape[0] for ve in video_embeddings])
+        padded_video_embeddings = []
+        for ve in video_embeddings:
+            target_shape = (max_length_video,) + ve.shape[1:]
+            padded_ve = torch.zeros(target_shape, dtype=ve.dtype)
+            padded_ve[:ve.shape[0]] = ve
+            padded_video_embeddings.append(padded_ve)
+        padded_video_embeddings = torch.stack(padded_video_embeddings)
 
     return (torch.stack(input_ids),
             torch.stack(padded_spectrograms),
             torch.stack(labels),
             torch.stack(attention_masks),
-            torch.stack(padded_video_embeddings))
+            padded_video_embeddings)
