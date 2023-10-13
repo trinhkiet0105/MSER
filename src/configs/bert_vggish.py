@@ -11,14 +11,14 @@ class Config(BaseConfig):
             setattr(self, key, value)
 
     def add_args(self, **kwargs):
-        self.batch_size = 2
-        self.num_epochs = 250
+        self.batch_size = 4
+        self.num_epochs = 10
 
         self.loss_type = "CrossEntropyLoss"
 
         self.model_type = "MMSERA"  # [MMSERA, SERVER]
         self.name = self.name + "_" + self.model_type
-        self.text_encoder_type = "bert"
+        self.text_encoder_type = "roberta"
         self.text_encoder_dim = 768
         self.text_unfreeze = False
         self.audio_encoder_type = "vggish"

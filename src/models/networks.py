@@ -32,15 +32,15 @@ class MMSERA(nn.Module):
         """
         super(MMSERA, self).__init__()
         # Text module
-        self.text_encoder = build_text_encoder(text_encoder_type)
-        self.text_encoder.to(device)
+        #self.text_encoder = build_text_encoder(text_encoder_type)
+        #self.text_encoder.to(device)
         
         #self.text_encoder = SimilarityClassifier("SamLowe/roberta-base-go_emotions", 768, 0.2,False,True)
         #self.text_encoder.to(device)
         #self.text_encoder.load_state_dict(torch.load("D:/bert-based-triplet/ckpt/best_model_v6_triplet_epoch_10",map_location=device))
 
-        # self.text_encoder = AutoModel.from_pretrained("SamLowe/roberta-base-go_emotions")
-        # self.text_encoder.to(device)
+        self.text_encoder = AutoModel.from_pretrained("SamLowe/roberta-base-go_emotions")
+        self.text_encoder.to(device)
 
         # Freeze/Unfreeze the text module
         for param in self.text_encoder.parameters():
