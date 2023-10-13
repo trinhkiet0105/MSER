@@ -59,9 +59,9 @@ class Config(BaseConfig):
         self.batch_size = 1
 
         # Resume training
-        self.resume = False
+        self.resume = True
         # path to checkpoint.pt file, only available when using save_all_states = True in previous training
-        self.resume_path = 'D:/SER_ICIIT_2024/notebooks/checkpoints/bert_vggish_MMSERA/20230928-020711/weights/checkpoint_35_132000.pt'
+        self.resume_path = 'D:\MMSERA/notebooks\checkpoints/bert_vggish_SERVER/20231012-101459\weights\checkpoint_10_40000.pt'
         if self.resume:
             assert os.path.exists(self.resume_path), "Resume path not found"
 
