@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvggish import vggish
 from transformers import BertConfig, BertModel
-
+import torchaudio
 
 def build_bert_encoder() -> nn.Module:
     """A function to build bert encoder"""
@@ -26,11 +26,23 @@ class VGGish(nn.Module):
             x = x.unsqueeze(1)
         return x
 
+class Wav2Vec2Base(nn.Module):
+    def __init__(self, **kwargs):
+        super(Wav2Vec2Base, self).__init__(**kwargs)
+        bundle = torchaudio.pipelines.WAV2VEC2_BASE
+        self.model = bundle.get_model()
 
+    def forward(self, x):
+        features, _ = self.model(x)
+        return features
+    
 def build_vggish_encoder() -> nn.Module:
     """A function to build vggish encoder"""
     return VGGish()
 
+
+def build_wav2vec2_base_encoder() -> nn.Module:
+    return Wav2Vec2Base()
 
 def build_audio_encoder(type: str = "vggish") -> nn.Module:
     """A function to build audio encoder
@@ -43,6 +55,7 @@ def build_audio_encoder(type: str = "vggish") -> nn.Module:
     """
     encoders = {
         "vggish": build_vggish_encoder,
+        "wav2vec": build_wav2vec2_base_encoder
     }
     assert type in encoders.keys(), f"Invalid audio encoder type: {type}"
     return encoders[type]()

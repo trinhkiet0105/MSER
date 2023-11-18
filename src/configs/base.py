@@ -89,7 +89,7 @@ class Config(BaseConfig):
         self.learning_rate_gamma = 0.1
 
         # Dataset
-        self.data_root = "D:/MELD/MELD"  # folder contains train.pkl and test.pkl
+        self.data_root = "D:/bert-based-selfalign/IEMOCAP_wav2vec/IEMOCAP_4_class"  # folder contains train.pkl and test.pkl
         # use for training with batch size > 1
         self.text_max_length = 297
         self.audio_max_length = 50 #546220

@@ -47,7 +47,7 @@ class IEMOCAPDataset(Dataset):
             add_special_tokens=True,
             max_length=self.text_max_length,
             truncation=True,
-            padding='max_length',
+            padding='longest',
             return_tensors="np"
         )
         input_ids = torch.tensor(text_input['input_ids'].squeeze(), dtype=torch.long)
@@ -70,7 +70,7 @@ class IEMOCAPDataset(Dataset):
         else:  # assuming it's a numpy array
             spectrogram = torch.tensor(spectrogram)
 
-        label = torch.tensor(label, dtype=torch.long)  # assuming label is an integer
+        label = torch.tensor(label, dtype=torch.long).squeeze()  # assuming label is an integer
 
         return input_ids, spectrogram, label, attention_mask, video_embedding
 
@@ -100,7 +100,7 @@ def build_train_test_dataset(
         audio_max_length = None
         text_max_length = None
     training_data = IEMOCAPDataset(
-        os.path.join(root, "train_data.pkl"),
+        os.path.join(root, "train.pkl").replace(os.sep,"/"),
         tokenizer,
         audio_max_length,
         text_max_length,
@@ -108,7 +108,7 @@ def build_train_test_dataset(
         # video_dir= 'D:/MELD/video_embeddings/MELD_train_embeddings'
         )
     test_data = IEMOCAPDataset(
-        os.path.join(root, "test_data.pkl"), 
+        os.path.join(root, "val.pkl").replace(os.sep,"/"), 
         tokenizer, 
         None, 
         None, 
@@ -119,13 +119,15 @@ def build_train_test_dataset(
     train_dataloader = DataLoader(
         training_data, 
         batch_size=batch_size, 
-        shuffle=False,
-        collate_fn=collate_fn)
+        shuffle=True,
+        collate_fn=collate_fn
+        )
     test_dataloader = DataLoader(
         test_data,
         batch_size=1, 
         shuffle=False,
-        collate_fn=collate_fn)
+        collate_fn=collate_fn
+        )
     return (train_dataloader, test_dataloader)
 
 def collate_fn(batch):
@@ -133,13 +135,17 @@ def collate_fn(batch):
     input_ids, spectrograms, labels, attention_masks, video_embeddings = zip(*batch)
     
     # Padding for spectrograms
-    max_length_spec = max([spec.shape[0] for spec in spectrograms])
+    max_length_spec = max([spec.shape[1] for spec in spectrograms])  # Adjusted to consider the second dimension
     padded_spectrograms = []
     for spec in spectrograms:
-        target_shape = (max_length_spec, spec.shape[1], spec.shape[2], spec.shape[3])
+        # Adjust the target shape to consider only the time dimension for padding
+        target_shape = (1, max_length_spec)
         padded_spec = torch.zeros(target_shape, dtype=spec.dtype)
-        padded_spec[:spec.shape[0]] = spec
+        padded_spec[:, :spec.shape[1]] = spec  # Adjusted indexing for padding
         padded_spectrograms.append(padded_spec)
+    
+    # Combine all spectrograms in a single tensor
+    padded_spectrograms = torch.cat(padded_spectrograms, dim=0)
     
     
     # Check if any video_embedding is None
@@ -158,7 +164,7 @@ def collate_fn(batch):
         padded_video_embeddings = torch.stack(padded_video_embeddings)
 
     return (torch.stack(input_ids),
-            torch.stack(padded_spectrograms),
+            padded_spectrograms,  # Updated padded_spectrograms
             torch.stack(labels),
             torch.stack(attention_masks),
             padded_video_embeddings)

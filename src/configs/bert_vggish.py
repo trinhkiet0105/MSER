@@ -11,7 +11,7 @@ class Config(BaseConfig):
             setattr(self, key, value)
 
     def add_args(self, **kwargs):
-        self.batch_size = 2
+        self.batch_size = 1
         self.num_epochs = 250
 
         self.loss_type = "CrossEntropyLoss"
@@ -21,8 +21,8 @@ class Config(BaseConfig):
         self.text_encoder_type = "bert"
         self.text_encoder_dim = 768
         self.text_unfreeze = False
-        self.audio_encoder_type = "vggish"
-        self.audio_encoder_dim = 128
+        self.audio_encoder_type = "wav2vec" #"vggish"
+        self.audio_encoder_dim = 768 #128
         self.audio_norm_type = "layer_norm"  # [layer_norm, min_max, None]
         self.audio_unfreeze = False
 
