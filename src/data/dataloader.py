@@ -108,7 +108,7 @@ def build_train_test_dataset(
         # video_dir= 'D:/MELD/video_embeddings/MELD_train_embeddings'
         )
     test_data = IEMOCAPDataset(
-        os.path.join(root, "val.pkl").replace(os.sep,"/"), 
+        os.path.join(root, "test.pkl").replace(os.sep,"/"), 
         tokenizer, 
         None, 
         None, 
